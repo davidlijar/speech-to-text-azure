@@ -31,6 +31,12 @@ def recognize_from_microphone():
     speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY'), region=os.environ.get('SPEECH_REGION'))
     speech_config.speech_recognition_language="ko-KR"
 
+    #text-to-speech
+    audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
+    # The neural multilingual voice can speak different languages based on the input text.
+    speech_config.speech_synthesis_voice_name='ko-KR-SunHiNeural'
+    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+
     audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 
@@ -45,7 +51,14 @@ def recognize_from_microphone():
 
         print("Model : ")
         for chunk in response:
+
             print(chunk.text)
+            
+            text = chunk
+            speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
+            if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+                print("Speech synthesized for text [{}]".format(text))
+            
 
 
 

@@ -1,17 +1,5 @@
-import os
-import azure.cognitiveservices.speech as speechsdk
 
-# This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
-speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY'), region=os.environ.get('SPEECH_REGION'))
-audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
 
-# The neural multilingual voice can speak different languages based on the input text.
-speech_config.speech_synthesis_voice_name='ko-KR-SunHiNeural'
-
-speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
-
-# Get text from the console and synthesize to the default speaker.
-print("Enter some text that you want to speak >")
 text = """
     AI의 미래는 다양한 기술 발전, 사회적 수용, 윤리적 고민 등 여러 요소에 의해 지속적으로 변화하고 발전할 것입니다. 여기 몇 가지 주요 방향성을 살펴보겠습니다:
 
@@ -39,17 +27,8 @@ text = """
 - **기술 교육**: AI 기술의 발전에 따라 관련 기술 교육이 중요해질 것이며, 평생 교육이 일반화될 가능성이 큽니다.
 
 미래의 AI는 사회 구조와 인간 생활을 혁신적으로 바꿀 잠재력을 가지고 있습니다. 이러한 변화는 기술적 진보뿐만 아니라 윤리적, 법적, 교육적 측면에서의 깊은 성찰과 준비가 필요합니다.
+
 """
+
 text.replace("-","").replace("#","").replace("*","")
 print(text)
-speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
-
-if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-    print("Speech synthesized for text [{}]".format(text))
-elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
-    cancellation_details = speech_synthesis_result.cancellation_details
-    print("Speech synthesis canceled: {}".format(cancellation_details.reason))
-    if cancellation_details.reason == speechsdk.CancellationReason.Error:
-        if cancellation_details.error_details:
-            print("Error details: {}".format(cancellation_details.error_details))
-            print("Did you set the speech resource key and region values?")
