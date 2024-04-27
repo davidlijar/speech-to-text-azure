@@ -38,11 +38,12 @@ def recognize_from_microphone():
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
 
     if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        print("Recognized: {}".format(speech_recognition_result.text))
+        print("You : {}".format(speech_recognition_result.text))
 
         user_input = speech_recognition_result.text
         response = chat.send_message(user_input, stream=True)
 
+        print("Model : ")
         for chunk in response:
             print(chunk.text)
 
