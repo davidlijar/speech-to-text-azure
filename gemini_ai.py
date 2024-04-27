@@ -1,13 +1,14 @@
 import pathlib
 import textwrap
 import PIL.Image
+import os
 
 import google.generativeai as genai
 
 from IPython.display import display
 from IPython.display import Markdown
 
-GOOGLE_API_KEY = "AIzaSyC92Kq6UcsQWcqXoZfqNqY3zgZ9XYse-rg"
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
 
 
