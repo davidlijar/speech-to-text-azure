@@ -1,5 +1,30 @@
 import os
+import textwrap
 import azure.cognitiveservices.speech as speechsdk
+
+
+
+import google.generativeai as genai
+
+from IPython.display import display
+from IPython.display import Markdown
+
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
+genai.configure(api_key=GOOGLE_API_KEY)
+
+def to_markdown(text):
+  text = text.replace('•', '  *')
+  return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+for m in genai.list_models():
+  if 'generateContent' in m.supported_generation_methods:
+    print(m.name)
+
+model = genai.GenerativeModel('gemini-pro')
+chat = model.start_chat(history=[])
+#print(chat)
+user_input = ""
+
 
 def recognize_from_microphone():
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
@@ -14,6 +39,16 @@ def recognize_from_microphone():
 
     if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
         print("Recognized: {}".format(speech_recognition_result.text))
+
+        user_input = speech_recognition_result.text
+        response = chat.send_message(user_input, stream=True)
+
+        for chunk in response:
+            print(chunk.text)
+
+
+
+
     elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
         print("No speech could be recognized: {}".format(speech_recognition_result.no_match_details))
     elif speech_recognition_result.reason == speechsdk.ResultReason.Canceled:
